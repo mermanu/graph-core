@@ -7,22 +7,39 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import es.stacks.graph.core.IGraph;
 import es.stacks.graph.core.IGraphVertex;
-import java.util.Queue;
 
-
+/**
+ * The Class Graph.
+ *
+ * @author manuelmerida
+ * @param <T> the generic type
+ */
 public class Graph<T> implements IGraph<T> {
 
-	private Map<String, IGraphVertex<T>> vertSet = new LinkedHashMap<String, IGraphVertex<T>>();
+	/** The vert set. */
+	private Map<String, IGraphVertex<T>> graphMap = new LinkedHashMap<String, IGraphVertex<T>>();
+	
+	/** The map. */
 	private Map<String, LinkedHashSet<IGraphVertex<T>>> map = new HashMap<String, LinkedHashSet<IGraphVertex<T>>>();
+	
+	/** The routes. */
 	private Map<String, Map<String, LinkedList<IGraphVertex<T>>>> routes = new HashMap<String, Map<String, LinkedList<IGraphVertex<T>>>>();
 
+	/* (non-Javadoc)
+	 * @see es.stacks.graph.core.IGraph#addVertex(es.stacks.graph.core.IGraphVertex)
+	 */
 	@Override
 	public void addVertex(IGraphVertex<T> hashVert) {
-		vertSet.put(hashVert.toString(), hashVert);
+		graphMap.put(hashVert.toString(), hashVert);
 	}
 
+	/* (non-Javadoc)
+	 * @see es.stacks.graph.core.IGraph#dfs(es.stacks.graph.core.IGraphVertex)
+	 */
 	@Override
 	/**
 	 * The helper method allows you to create a new Array list to see if the
@@ -39,7 +56,12 @@ public class Graph<T> implements IGraph<T> {
 		return dfsVert;
 	}
 
-	/** The method that does all the work **/
+	/**
+	 *  The method that does all the work *.
+	 *
+	 * @param v the v
+	 * @param list the list
+	 */
 	private void dfsVisit(IGraphVertex<T> v, List<IGraphVertex<T>> list) {
 		// add the vertex to the list
 		list.add(v);
@@ -56,6 +78,12 @@ public class Graph<T> implements IGraph<T> {
 		}
 	}
 
+	/**
+	 * Adjacent nodes.
+	 *
+	 * @param last the last
+	 * @return the linked list
+	 */
 	public LinkedList<IGraphVertex<T>> adjacentNodes(String last) {
 		LinkedHashSet<IGraphVertex<T>> adjacent = map.get(last);
 		if (adjacent == null) {
@@ -64,6 +92,12 @@ public class Graph<T> implements IGraph<T> {
 		return new LinkedList<IGraphVertex<T>>(adjacent);
 	}
 
+	/**
+	 * Depth first search.
+	 *
+	 * @param visited the visited
+	 * @param destiny the destiny
+	 */
 	private void depthFirstSearch(LinkedList<IGraphVertex<T>> visited, String destiny) {
 		LinkedList<IGraphVertex<T>> nodes = adjacentNodes(visited.getLast().toString());
 		// examine adjacent nodes
@@ -91,8 +125,8 @@ public class Graph<T> implements IGraph<T> {
 	/**
 	 * Adds the walked.
 	 *
-	 * @param visited
-	 *            the visited
+	 * @param visited            the visited
+	 * @param destiny the destiny
 	 */
 	private void addWalked(LinkedList<IGraphVertex<T>> visited, String destiny) {
 		if (routes.get(visited.getFirst().toString() + destiny) != null) {
@@ -106,6 +140,12 @@ public class Graph<T> implements IGraph<T> {
 
 	}
 
+	/**
+	 * Gets the ref name.
+	 *
+	 * @param visited the visited
+	 * @return the ref name
+	 */
 	private String getRefName(LinkedList<IGraphVertex<T>> visited) {
 		StringBuilder builder = new StringBuilder();
 		for (IGraphVertex<T> vis : visited) {
@@ -114,7 +154,12 @@ public class Graph<T> implements IGraph<T> {
 		return builder.toString();
 	}
 
-	/** To string method for depth first search **/
+	/**
+	 *  To string method for depth first search *.
+	 *
+	 * @param v the v
+	 * @return the string
+	 */
 	@Override
 	public String toDFSString(IGraphVertex<T> v) {
 		// create a list
@@ -124,53 +169,39 @@ public class Graph<T> implements IGraph<T> {
 		return list.toString();
 	}
 
-	@Override
-	// Breadth First Search
-	public List<IGraphVertex<T>> bfs(IGraphVertex<T> v) {
-		// create an array list
-		List<IGraphVertex<T>> bfsVert = new ArrayList<IGraphVertex<T>>();
-		// create a queue
-		Queue<IGraphVertex<T>> qVert = new LinkedList<IGraphVertex<T>>();
-
-		// the queue will enqueue the vertex
-		qVert.add(v);
-		// while the queue is not empty
-		while (!qVert.isEmpty()) {
-			// dequeue the queue
-			v = qVert.poll();
-			// add a vertex to the list
-			bfsVert.add(v);
-			// for loop to check the neighbors
-			for (IGraphVertex<T> vertex : v.getNeighbors()) {
-				// if the vertex is not visited
-				if (vertex.isVisited() == false) {
-					vertex.setVisited(true);
-					// enqueue the vertex
-					qVert.add(vertex);
-				}
-			}
-		}
-		return bfsVert;
-	}
-
-	@Override
-	public String toBFSString(IGraphVertex<T> v) {
-		// create a list which does the breadth first search
-		List<IGraphVertex<T>> list = bfs(v);
-		// make a string to the list
-		return list.toString();
-	}
-
+	/* (non-Javadoc)
+	 * @see es.stacks.graph.core.IGraph#addConnection(es.stacks.graph.core.IGraphVertex, es.stacks.graph.core.IGraphVertex)
+	 */
 	@Override
 	public void addConnection(IGraphVertex<T> vertA, IGraphVertex<T> vertB) {
-		if (vertSet.get(vertA.toString()) == null) {
-			vertSet.put(vertA.toString(), vertA);
+		
+		addVertexToMap(vertA, vertB);
+		addAdjacentNode(vertA, vertB);
+	}
+	
+	/**
+	 * Adds the vertex to map.
+	 *
+	 * @param vertA the vert a
+	 * @param vertB the vert b
+	 */
+	private void addVertexToMap(IGraphVertex<T> vertA, IGraphVertex<T> vertB){
+		if (graphMap.get(vertA.toString()) == null) {
+			graphMap.put(vertA.toString(), vertA);
 		}
-		if (vertSet.get(vertB.toString()) == null) {
-			vertSet.put(vertB.toString(), vertB);
+		if (graphMap.get(vertB.toString()) == null) {
+			graphMap.put(vertB.toString(), vertB);
 		}
-		vertSet.get(vertA.toString()).addNeighbors(vertB);
-
+		graphMap.get(vertA.toString()).addNeighbors(vertB);
+	}
+	
+	/**
+	 * Adds the adjacent node.
+	 *
+	 * @param vertA the vert a
+	 * @param vertB the vert b
+	 */
+	private void addAdjacentNode(IGraphVertex<T> vertA, IGraphVertex<T> vertB){
 		LinkedHashSet<IGraphVertex<T>> adjacent = map.get(vertA.toString());
 		if (adjacent == null) {
 			adjacent = new LinkedHashSet<IGraphVertex<T>>();
@@ -179,21 +210,43 @@ public class Graph<T> implements IGraph<T> {
 		adjacent.add(vertB);
 	}
 
+	/* (non-Javadoc)
+	 * @see es.stacks.graph.core.IGraph#getGraphMap()
+	 */
 	@Override
 	public Map<String, IGraphVertex<T>> getGraphMap() {
-		return vertSet;
+		return graphMap;
 	}
 
+	/* (non-Javadoc)
+	 * @see es.stacks.graph.core.IGraph#calculateRoutes(es.stacks.graph.core.IGraphVertex)
+	 */
 	public Map<String, Map<String, LinkedList<IGraphVertex<T>>>> calculateRoutes(IGraphVertex<T> v) {
 		List<IGraphVertex<T>> list = dfs(v);
+		System.out.println("Calculate routes:"+list.toString());
 		int size = list.size() - 1;
+		/*LinkedList<IGraphVertex<T>> visited = new LinkedList<IGraphVertex<T>>();
+		visited.add(v);
+		depthFirstSearch(visited, list.get(size).toString());*/
+		
 		while (size > 0) {
 			LinkedList<IGraphVertex<T>> visited = new LinkedList<IGraphVertex<T>>();
 			visited.add(v);
 			depthFirstSearch(visited, list.get(size).toString());
 			size--;
 		}
-		System.out.println("routes "+ v.toString() +" to "+ list.get(list.size() - 1).toString() + ":"+ routes.toString());
+		int base = 0;
+		while(base<list.size()){
+			LinkedList<IGraphVertex<T>> visited = new LinkedList<IGraphVertex<T>>();
+			visited.add(list.get(base));
+			depthFirstSearch(visited, list.get(list.size()-1).toString());
+			base++;
+		}
+		System.out.println("routes "+ v.toString() +" to "+ list.get(list.size() - 1).toString() + ":");
+		for(Entry<String, Map<String, LinkedList<IGraphVertex<T>>>> entry : routes.entrySet()){
+			System.out.println(entry.getValue().toString());
+		}
+		System.out.println("---------------------");
 		return routes;
 	}
 

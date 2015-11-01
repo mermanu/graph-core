@@ -53,36 +53,22 @@ public class AppTest extends TestCase {
 		graph = new Graph<String>();
 		graph.addConnection(a, b);
 		graph.addConnection(a, c);
-		graph.addConnection(a, d);
-		graph.addConnection(b, g);
-		graph.addConnection(c, f);
-		graph.addConnection(d, a);
+		graph.addConnection(c, d);
 		graph.addConnection(d, f);
+		graph.addConnection(f, e);
+		graph.addConnection(f, g);
+		graph.addConnection(b, c);
+		graph.addConnection(f, b);
+		graph.addConnection(g, b);
+		graph.addConnection(e, b);
 
 	}
 
-	
-	/**
-	 * Rigourous Test :-)
-	 */
 	public void testDFS() {
 		// set the data for the vertex
-		setDataToTest2();
-		System.out.println(graph.toDFSString(a));
-		//assertEquals("[A, B, C, E, D, F]", graph.toDFSString(a));
+		
 		
 		setDataToTest2();
-		System.out.println(graph.toDFSString(c));
-		
-		setDataToTest2();
-		System.out.println(graph.toDFSString(b));
-		setDataToTest2();
-		System.out.println(graph.toDFSString(d));
-		setDataToTest2();
-		System.out.println(graph.toDFSString(e));
-		setDataToTest2();
-		System.out.println(graph.toDFSString(f));
-		
 		graph.calculateRoutes(a);
 		setDataToTest2();
 		graph.calculateRoutes(b);
@@ -97,11 +83,5 @@ public class AppTest extends TestCase {
 		setDataToTest2();
 		graph.calculateRoutes(g);
 		setDataToTest2();
-	}
-	
-	public void testBFS(){
-		//test the breadth first search method
-		setDataToTest2();
-		//assertEquals("[A, B, C, D, E, F]", graph.toBFSString(a));
 	}
 }
