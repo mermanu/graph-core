@@ -12,12 +12,9 @@ import es.stacks.graph.core.IGraphVertex;
 import java.util.Queue;
 
 
-
-
 public class Graph<T> implements IGraph<T> {
 
 	private Map<String, IGraphVertex<T>> vertSet = new LinkedHashMap<String, IGraphVertex<T>>();
-	private Map<String, List<List<IGraphVertex<T>>>> flows = new HashMap<String, List<List<IGraphVertex<T>>>>();
 	private Map<String, LinkedHashSet<IGraphVertex<T>>> map = new HashMap<String, LinkedHashSet<IGraphVertex<T>>>();
 	private Map<String, Map<String, LinkedList<IGraphVertex<T>>>> routes = new HashMap<String, Map<String, LinkedList<IGraphVertex<T>>>>();
 
@@ -115,22 +112,6 @@ public class Graph<T> implements IGraph<T> {
 			builder.append(vis.toString());
 		}
 		return builder.toString();
-	}
-
-	/** The method that does all the work **/
-	private void dfsVisitHierarchy(IGraphVertex<T> v, List<IGraphVertex<T>> list) {
-		// add the vertex to the list
-		list.add(v);
-		// create a for loop to check all the neighbors
-		for (IGraphVertex<T> vertex : v.getNeighbors()) {
-			// if the neighbors doen't get visited
-			if (vertex.isVisited() == false) {
-				// visit the vertex neighbors
-				vertex.setVisited(true);
-				// do a depth first search visit through the list
-				dfsVisit(vertex, list);
-			}
-		}
 	}
 
 	/** To string method for depth first search **/
